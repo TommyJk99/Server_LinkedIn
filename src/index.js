@@ -6,6 +6,7 @@ import { User } from "./models/users.js"
 import jwt from "jsonwebtoken"
 import checkJwt from "./middlewares/checkJwt.js"
 import multer from "multer"
+import cors from "cors"
 
 const server = express()
 
@@ -98,6 +99,7 @@ server.get("/profile", async (req, res, next) => {
 //Questo GET ritorna il profile dell'utente LOGGATO. Qui viene controllato il token
 //Requisiti: serve il token nelle Authorization!
 //Requisiti body: nessuno, se ne occupa il mdw checkJwt ad estrarre le info dal Token e metterle in req.user
+//creare token anche nel login
 server.get("/me", checkJwt, async (req, res, next) => {
   try {
     // Qui, req.user è già stato impostato dal middleware checkJwt
