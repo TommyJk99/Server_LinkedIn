@@ -99,13 +99,28 @@ server.get("/profile", async (req, res, next) => {
 //Questo GET ritorna il profile dell'utente LOGGATO. Qui viene controllato il token
 //Requisiti: serve il token nelle Authorization!
 //Requisiti body: nessuno, se ne occupa il mdw checkJwt ad estrarre le info dal Token e metterle in req.user
-//creare token anche nel login
+//creare token anche nel login refresh token???
 server.get("/me", checkJwt, async (req, res, next) => {
   try {
     // Qui, req.user è già stato impostato dal middleware checkJwt
     res.status(200).json(req.user)
   } catch (err) {
     next(err)
+  }
+})
+
+server.get("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const user = await User.findById(id)
+
+    if (!user) {
+      return res.status(404).send()
+    }
+
+    res.json(user)
+  } catch (error) {
+    next(error)
   }
 })
 
