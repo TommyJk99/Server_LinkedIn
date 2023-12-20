@@ -83,4 +83,19 @@ experiencesRouter
     }
   })
 
+  .delete("/:exp", checkJwt, compareIds, async (req, res, next) => {
+    try {
+      const { exp } = req.params
+      // console.log(id)
+      const deletedDoc = await Experience.findByIdAndDelete(exp)
+      if (!deletedDoc) {
+        res.status(404).send()
+      } else {
+        res.status(204).send()
+      }
+    } catch (err) {
+      next(err)
+    }
+  })
+
 export default experiencesRouter
