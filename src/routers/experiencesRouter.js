@@ -13,7 +13,6 @@ experiencesRouter
   .get("/", async (req, res, next) => {
     try {
       const userId = req.params.id // Ottengo l'id dell'utente dai parametri dell'URL
-      console.log(userId)
 
       // Eseguo una query per trovare tutte le esperienze associate all'ID dell'utente
       // Forse conveniva racchiudere tutte le esperienze all'interno di una chiave di un profilo?
@@ -24,7 +23,7 @@ experiencesRouter
       next(error)
     }
   })
-  //questo post permetta all'utente con un token valido di creare una nuova esperienza
+  //questo POST permetta all'utente con un token valido di creare una nuova esperienza
   //l'id dell'utente viene recuperato dal mdw checkJwt invece che dall'URL
   .post("/", checkJwt, async (req, res, next) => {
     try {
@@ -35,6 +34,49 @@ experiencesRouter
       await newExperience.save()
 
       res.status(201).json(newExperience)
+    } catch (err) {
+      next(err)
+    }
+  })
+
+  //questo GET ritorna un'esperienza in particolare dell'utente identificato dal token
+  .get("/:expId", checkJwt, async (req, res, next) => {
+    try {
+      const { expId } = req.params
+      const experience = await Experience.findById(expId)
+
+      if (!experience) {
+        return res.status(404).json({ messaggio: "Esperienza non trovata" })
+      }
+      res.status(200).json(experience)
+    } catch (err) {
+      next(err)
+    }
+  })
+
+  //questa PUT modifica una esperienza in particolare se l'utente ha un token valido
+  //ATTENZIONE!!
+  //tuttavia se un utente con un token valido non è il proprietario è un casino, quindi serve un controllo in più
+  .put("/:expId", checkJwt, async (req, res, next) => {
+    try {
+      const { expId } = req.params
+      const userIdFromToken = req.user._id.toString() // serve il cast perchè è un IdObject
+      const { id } = req.params
+
+      console.log(userIdFromToken, id)
+
+      if (userIdFromToken !== id) {
+        return res.status(403).send({ message: "Non sei il proprietario di questi dati!" })
+      }
+      const modifiedExp = await Experience.findByIdAndUpdate(expId, req.body, { new: true })
+
+      if (!modifiedExp) {
+        return res.status(404).json({ messaggio: "Esperienza non trovata" })
+      }
+
+      await modifiedExp.save()
+
+      res.status(200).json(modifiedExp)
     } catch (err) {
       next(err)
     }

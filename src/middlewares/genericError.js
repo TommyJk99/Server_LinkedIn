@@ -5,7 +5,7 @@ export const genericError = (err, req, res, next) => {
   if (err.name === "ValidationError") {
     // Gestione degli errori di validazione
     statusCode = 400
-    message = "Errore di validazione 🙉"
+    message = "Errore di validazione, controlla i dati inviati! 🙉"
   }
 
   if (err.name === "UnauthorizedError") {
