@@ -5,6 +5,7 @@ import checkJwt from "../middlewares/checkJwt.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import multer from "multer"
+import compareIds from "../middlewares/compareIds.js"
 
 const profilesRouter = express.Router()
 
@@ -46,7 +47,7 @@ profilesRouter
   //questo GET ritorna le informazioni dell'utente se ha un token valido
   //Requisiti: token
   //checkJWT fornisce già l'utente
-  .get("/me", checkJwt, async (req, res, next) => {
+  .get("/me", checkJwt, compareIds, async (req, res, next) => {
     try {
       res.status(200).json(req.user)
     } catch (err) {
@@ -54,7 +55,7 @@ profilesRouter
     }
   })
 
-  //questo psot serve ad effettuare il login con password ed email,
+  //questo post serve ad effettuare il login con password ed email,
   //Requisiti: password ed email (funziona anche se c'è tutto il resto dell'oggetto)
   //Se tutto funziona correttamente da un token valido per 5 ore
   .post("/login", async (req, res, next) => {
@@ -103,7 +104,7 @@ profilesRouter
   })
 
   //questa patch carica l'immagine sul server in uploads e resistuisce la posizione dell'immagine
-  .patch("/:id/image", checkJwt, upload.single("profile-img"), async (req, res, next) => {
+  .patch("/:id/image", checkJwt, compareIds, upload.single("profile-img"), async (req, res, next) => {
     try {
       if (req.file) {
         console.log(req.file.path) // Stampa il percorso dove viene salvato il file
@@ -139,7 +140,7 @@ profilesRouter
   })
 
   //questa PUT modifica l'utente SE esso è autorizzato, tuttavia è necessario hashare nuovamente la pssw
-  .put("/:id", checkJwt, async (req, res, next) => {
+  .put("/:id", checkJwt, compareIds, async (req, res, next) => {
     try {
       //creo una variabile in modo tale da copiare la richiesta inserendo però la pssw hashata
       let updatedBodyHashed = req.body
