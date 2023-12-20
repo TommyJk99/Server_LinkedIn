@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken"
 import { User } from "../models/users.js"
 
-//Questo mdw legge il token inserito nella richiesta, se tutto va bene si passa al mdw successivo
+//Questo mdw legge il token inserito nella richiesta, estrapola l'id dell'utente dal token
+//e infine butta in req.user le informazioni dell'utente
 const checkJwt = async (req, res, next) => {
   try {
     const token = req.headers.authorization.split(" ")[1]
