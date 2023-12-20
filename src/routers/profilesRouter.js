@@ -5,7 +5,6 @@ import checkJwt from "../middlewares/checkJwt.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import multer from "multer"
-import mongoose from "mongoose"
 
 const profilesRouter = express.Router()
 
@@ -28,10 +27,12 @@ const upload = multer({ storage })
 profilesRouter.use("/experiences", experiencesRouter)
 
 profilesRouter
+
   //controllo se profilesRouter è UP
   .get("/health", (req, res) => {
     res.json({ message: "Profiles route is working!" })
   })
+
   //restituisco tutti i profili
   .get("/", async (req, res, next) => {
     try {
@@ -41,6 +42,7 @@ profilesRouter
       next(err)
     }
   })
+
   //questo GET ritorna le informazioni dell'utente se ha un token valido
   //Requisiti: token
   //checkJWT fornisce già l'utente
@@ -99,6 +101,7 @@ profilesRouter
       next(error)
     }
   })
+
   //questa patch carica l'immagine sul server in uploads e resistuisce la posizione dell'immagine
   .patch("/:id/image", checkJwt, upload.single("profile-img"), async (req, res, next) => {
     try {
@@ -112,6 +115,7 @@ profilesRouter
       next(error) // Passa eventuali errori al middleware di gestione degli errori
     }
   })
+
   //questo POST crea un nuovo utente, hasha la password, e resituisce subito il token (REGISTRAZIONE)
   //Requisiti body: name surname email password
   .post("/", async (req, res, next) => {
@@ -133,7 +137,8 @@ profilesRouter
       next(err)
     }
   })
-  //questa PUT modifica l'utente se esso è autorizzato, tuttavia è necessario hashare nuovamente la pssw
+
+  //questa PUT modifica l'utente SE esso è autorizzato, tuttavia è necessario hashare nuovamente la pssw
   .put("/:id", checkJwt, async (req, res, next) => {
     try {
       //creo una variabile in modo tale da copiare la richiesta inserendo però la pssw hashata
