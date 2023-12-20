@@ -5,6 +5,7 @@ import checkJwt from "../middlewares/checkJwt.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import multer from "multer"
+import mongoose from "mongoose"
 
 const profilesRouter = express.Router()
 
@@ -105,6 +106,18 @@ profilesRouter
 
       const { password: _, __v, ...newUserWithoutPassword } = newUser.toObject()
       res.status(201).json({ user: newUserWithoutPassword, token })
+    } catch (err) {
+      next(err)
+    }
+  })
+  //questa PUT modifica l'utente se esso è autorizzato, tuttavia è necessario hashare nuovamente la pssw
+  .put("/:id", checkJwt, async (req, res, next) => {
+    try {
+      const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
+        new: true,
+      })
+
+      res.json(updatedUser)
     } catch (err) {
       next(err)
     }
