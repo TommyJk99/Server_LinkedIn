@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage })
 
-profilesRouter.use("/experiences", experiencesRouter)
+profilesRouter.use("/:id/experiences", experiencesRouter)
 
 profilesRouter
 
