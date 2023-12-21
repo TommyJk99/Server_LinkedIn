@@ -54,7 +54,7 @@ profilesRouter
 
   //questo post serve ad effettuare il login con password ed email,
   //Requisiti: password ed email (funziona anche se c'è tutto il resto dell'oggetto)
-  //Se tutto funziona correttamente da un token valido per 5 ore
+  //Se tutto funziona correttamente da un token valido per 10 ore
   .post("/login", async (req, res, next) => {
     try {
       const { email, password } = req.body
@@ -73,7 +73,7 @@ profilesRouter
 
       // Genera un nuovo token JWT
       const token = jwt.sign({ userId: user._id }, process.env.MY_SECRET, {
-        expiresIn: "5h", // Imposta un periodo di validità per il token
+        expiresIn: "10h", // Imposta un periodo di validità per il token
       })
 
       // Restituisce l'utente con il nuovo token
@@ -99,9 +99,9 @@ profilesRouter
       next(error)
     }
   })
-  //checkJwt, compareIds,
-  //questa patch carica l'immagine sul server in uploads e resistuisce la posizione dell'immagine
-  .patch("/:id/image", upload.single("profile-img"), async (req, res, next) => {
+
+  //questa patch carica l'immagine sul server in uploads e resistuisce la posizione dell'immagine se si ha token
+  .patch("/:id/image", checkJwt, compareIds, upload.single("profile-img"), async (req, res, next) => {
     try {
       if (req.file) {
         console.log(req.file.path) // Stampa il percorso dove viene salvato il file
