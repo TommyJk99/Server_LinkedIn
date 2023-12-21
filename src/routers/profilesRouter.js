@@ -6,24 +6,21 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import multer from "multer"
 import compareIds from "../middlewares/compareIds.js"
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import { v2 as cloudinary } from "cloudinary"
 
 const profilesRouter = express.Router()
 
-//Configuro Multer per poter caricare i file
-const storage = multer.diskStorage({
-  destination: "./uploads",
-  filename: function (req, file, callback) {
-    if (["image/jpeg", "image/png"].includes(file.mimetype)) {
-      callback(null, `${Date.now()}_${file.originalname}`) //fare con id req.params.id
-    } else {
-      const error = new Error("Please upload png or jpg")
-      error.statusCode = 500
-      callback(error)
-    }
+//Configuro Cloudinary per poter caricare i file
+cloudinary.config()
+const cloudstorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "blogfolder",
   },
 })
 
-const upload = multer({ storage })
+const upload = multer({ storage: cloudstorage })
 
 profilesRouter.use("/:id/experiences", experiencesRouter)
 
@@ -102,9 +99,9 @@ profilesRouter
       next(error)
     }
   })
-
+  //checkJwt, compareIds,
   //questa patch carica l'immagine sul server in uploads e resistuisce la posizione dell'immagine
-  .patch("/:id/image", checkJwt, compareIds, upload.single("profile-img"), async (req, res, next) => {
+  .patch("/:id/image", upload.single("profile-img"), async (req, res, next) => {
     try {
       if (req.file) {
         console.log(req.file.path) // Stampa il percorso dove viene salvato il file
