@@ -2,6 +2,9 @@ import express from "express"
 import { Experience } from "../models/experiences.js"
 import checkJwt from "../middlewares/checkJwt.js"
 import compareIds from "../middlewares/compareIds.js"
+import { CloudinaryStorage } from "multer-storage-cloudinary"
+import { v2 as cloudinary } from "cloudinary"
+import multer from "multer"
 
 //mergeParams mi consente di usare :id del router profiles
 //HO PERSO UN'ORA PER QUESTO
