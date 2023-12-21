@@ -53,7 +53,7 @@ profilesRouter
     async (req, res) => {
       const payload = { id: req.user._id }
 
-      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      const token = jwt.sign(payload, process.env.MY_SECRET, {
         expiresIn: "2h",
       })
 
