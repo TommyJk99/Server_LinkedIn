@@ -7,6 +7,17 @@ import compareIds from "../middlewares/compareIds.js"
 //HO PERSO UN'ORA PER QUESTO
 const experiencesRouter = express.Router({ mergeParams: true })
 
+//Configuro Cloudinary per poter caricare i file
+cloudinary.config()
+const cloudstorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "blogfolder",
+  },
+})
+
+const upload = multer({ storage: cloudstorage })
+
 //routes del tipo .../api/profiles/:id/experiences/...
 experiencesRouter
 
