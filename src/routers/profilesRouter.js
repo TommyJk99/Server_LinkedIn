@@ -138,9 +138,11 @@ profilesRouter
   //questa patch carica l'immagine sul server in uploads e resistuisce la posizione dell'immagine se si ha token
   .patch("/:id/image", checkJwt, compareIds, upload.single("profile-img"), async (req, res, next) => {
     try {
+      const { id } = req.params
       if (req.file) {
+        const updatedImage = await User.findByIdAndUpdate(id, { image: req.file.path }, { new: true })
         console.log(req.file.path) // Stampa il percorso dove viene salvato il file
-        res.status(200).json({ message: "Immagine caricata!", path: req.file.path })
+        res.status(200).json(updatedImage)
       } else {
         res.status(400).json({ message: "No file uploaded" })
       }
