@@ -79,7 +79,7 @@ profilesRouter
   //questo GET ritorna le informazioni dell'utente se ha un token valido
   //Requisiti: token
   //checkJWT fornisce già l'utente
-  .get("/me", checkJwt, compareIds, async (req, res, next) => {
+  .get("/me", checkJwt, async (req, res, next) => {
     try {
       res.status(200).json(req.user)
     } catch (err) {
