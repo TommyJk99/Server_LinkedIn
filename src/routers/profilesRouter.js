@@ -8,6 +8,7 @@ import multer from "multer"
 import compareIds from "../middlewares/compareIds.js"
 import { CloudinaryStorage } from "multer-storage-cloudinary"
 import { v2 as cloudinary } from "cloudinary"
+import passport from "passport"
 
 const profilesRouter = express.Router()
 
@@ -24,12 +25,46 @@ const upload = multer({ storage: cloudstorage })
 
 profilesRouter.use("/:id/experiences", experiencesRouter)
 
+//RICORDA DI METTERE LE ROTTE PIU' SPECIFICHE PRIMA DI QUELLE GENERICHE
 profilesRouter
 
   //controllo se profilesRouter è UP
   .get("/health", (req, res) => {
     res.json({ message: "Profiles route is working!" })
   })
+  //qui inizia la parte di autenticazione con google
+  //questa chiamata viene utilizzata dal front-end per reinderizzare l'utente a google
+  //stabilisco prima queste due rotte per evitare problemi con le rotte generiche come /:id
+  .get(
+    "/oauth-google",
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      prompt: "select_account",
+    })
+  )
+  //Dopodichè l'utente si autentica attraverso google e viene reindirizzato a questa chiamata
+  //questa chiamata da un token valido per 1 ora all'utente. Se l'utente non è autorizzato viene reindirizzato alla home
+  .get(
+    "/oauth-callback",
+    passport.authenticate("google", {
+      failureRedirect: "/",
+      session: false,
+    }),
+    async (req, res) => {
+      const payload = { id: req.user._id }
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "2h",
+      })
+
+      // 4 - Dopo aver autenticato l'utente con Google, lo reindirizziamo
+      // al frontend che deve gestire i dati nell'URL oltreché nel localStorage
+      // quindi il frontend dopo aver ricevuto il token e l'id dell'utente deve salvarli nel localStorage
+      res.redirect(`http://localhost:3000?token=${token}&userId=${req.user._id}`)
+    }
+  )
+  // Logout
+  // usersRouter.delete("/session", async (req, res) => {})
 
   //restituisco tutti i profili
   .get("/", async (req, res, next) => {

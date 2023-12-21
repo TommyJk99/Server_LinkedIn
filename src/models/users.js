@@ -1,4 +1,4 @@
-import { mongoose, Schema } from "mongoose";
+import { mongoose, Schema } from "mongoose"
 
 //modello utente stile striveschool
 const userSchema = new Schema({
@@ -16,7 +16,9 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () {
+      return this.googleId ? false : true
+    }, //se googleId è presente non richiede la password se no la richiede
   },
   username: {
     type: String,
@@ -48,6 +50,12 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-});
+  googleId: {
+    type: String,
+    required: function () {
+      return this.password ? false : true
+    }, //se password è presente non richiede il googleId se no lo richiede
+  },
+})
 
-export const User = mongoose.model("Users", userSchema, "users");
+export const User = mongoose.model("Users", userSchema, "users")

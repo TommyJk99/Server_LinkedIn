@@ -4,15 +4,20 @@ import mongoose from "mongoose"
 import cors from "cors"
 import apiRouter from "./routers/apiRouter.js"
 import { genericError } from "./middlewares/genericError.js"
+import passport from "passport"
+import googleStrategy from "./middlewares/oauth/google.js"
 
 const server = express()
 
 server.use(cors())
+server.use(express.json())
+//1. creiamo su google una nuova applicazione e recuperimo le credenziali clientID e clientSecret
+//2. creiamo una nuova strategia di autenticazione con Google
+passport.use(googleStrategy)
 
 const port = process.env.PORT || 3030
-server.use(express.json())
 
-/*ROUTES
+/*ROUTES esempi
 api/profiles/:userId/experiences/:expId
 api/profiles/:userId/picture
 api/profiles/:userId/experiences/:expId/picture
