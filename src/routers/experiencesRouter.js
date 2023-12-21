@@ -97,5 +97,20 @@ experiencesRouter
       next(err)
     }
   })
+  //questa PATCH manda un immagine su cloudinary e modifica il valore image dell'esperienza
+  .patch("/:expId/image", checkJwt, compareIds, upload.single("experience-img"), async (req, res, next) => {
+    try {
+      const { expId } = req.params
+      if (req.file) {
+        const updatedImage = await Experience.findByIdAndUpdate(expId, { image: req.file.path }, { new: true })
+        console.log(req.file.path) // Stampa il percorso dove viene salvato il file
+        res.status(200).json(updatedImage)
+      } else {
+        res.status(400).json({ message: "No file uploaded" })
+      }
+    } catch (err) {
+      next(err)
+    }
+  })
 
 export default experiencesRouter
