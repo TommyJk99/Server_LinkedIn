@@ -10,11 +10,11 @@ import googleStrategy from "./middlewares/oauth/google.js"
 const server = express()
 
 //whitelist è un array di stringhe che rappresentano gli indirizzi dei siti che possono accedere al nostro server
-const whitelist = ["https://linkedin-clone-wdpt03-m6bw.netlify.app/", "http://localhost:3000"]
+const whitelist = ["https://linkedin-clone-wdpt03-m6bw.netlify.app", "http://localhost:3000"]
 //corsOptions è un oggetto di configurazione per il middleware cors
 const corsOptions = {
   origin: function (origin, next) {
-    if (whitelist.includes(origin) || !origin) {
+    if (!origin || whitelist.includes(origin)) {
       next(null, true)
     } else {
       next(new Error("Not allowed by CORS"))
