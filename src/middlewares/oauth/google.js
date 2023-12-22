@@ -5,7 +5,7 @@ const googleStrategy = new GoogleStrategy(
   {
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: "https://linkedin-clone-wdpt03-m6bw.netlify.app/api/profiles/oauth-callback",
+    callbackURL: "https://server-linkedin-project-test.onrender.com/api/profiles/oauth-callback",
   },
   async function (_, __, profile, cb) {
     console.log(profile)
