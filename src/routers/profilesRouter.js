@@ -34,7 +34,6 @@ profilesRouter
   })
   //qui inizia la parte di autenticazione con google
   //questa chiamata viene utilizzata dal front-end per reinderizzare l'utente a google
-  //stabilisco prima queste due rotte per evitare problemi con le rotte generiche come /:id
   .get(
     "/oauth-google",
     passport.authenticate("google", {
@@ -43,7 +42,7 @@ profilesRouter
     })
   )
   //Dopodichè l'utente si autentica attraverso google e viene reindirizzato a questa chiamata
-  //questa chiamata da un token valido per 1 ora all'utente. Se l'utente non è autorizzato viene reindirizzato alla home
+  //questa chiamata da' un token valido per 1 ora all'utente. Se l'utente non è autorizzato viene reindirizzato alla home
   .get(
     "/oauth-callback",
     passport.authenticate("google", {
@@ -60,7 +59,7 @@ profilesRouter
       // 4 - Dopo aver autenticato l'utente con Google, lo reindirizziamo
       // al frontend che deve gestire i dati nell'URL oltreché nel localStorage
       // quindi il frontend dopo aver ricevuto il token e l'id dell'utente deve salvarli nel localStorage
-      res.redirect(`http://localhost:3000?token=${token}&userId=${req.user._id}`)
+      res.redirect(`https://linkedin-clone-wdpt03-m6bw.netlify.app?token=${token}&userId=${req.user._id}`)
     }
   )
   // Logout
