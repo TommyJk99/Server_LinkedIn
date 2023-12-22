@@ -9,8 +9,23 @@ import googleStrategy from "./middlewares/oauth/google.js"
 
 const server = express()
 
-server.use(cors())
+//whitelist è un array di stringhe che rappresentano gli indirizzi dei siti che possono accedere al nostro server
+const whitelist = ["https://linkedin-clone-wdpt03-m6bw.netlify.app/", "http://localhost:3000"]
+//corsOptions è un oggetto di configurazione per il middleware cors
+const corsOptions = {
+  origin: function (origin, next) {
+    if (whitelist.includes(origin) || !origin) {
+      next(null, true)
+    } else {
+      next(new Error("Not allowed by CORS"))
+    }
+  },
+}
+//questo middleware mi permette di accettare richieste solo da alcuni indirizzi
+server.use(cors(corsOptions))
+
 server.use(express.json())
+
 //1. creiamo su google una nuova applicazione e recuperimo le credenziali clientID e clientSecret
 //2. creiamo una nuova strategia di autenticazione con Google
 passport.use(googleStrategy)
