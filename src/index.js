@@ -20,6 +20,7 @@ const corsOptions = {
       next(new Error("Not allowed by CORS"))
     }
   },
+  credentials: true, //questo fa si che il token nell'URL venga passato al server
 }
 //questo middleware mi permette di accettare richieste solo da alcuni indirizzi
 server.use(cors(corsOptions))
