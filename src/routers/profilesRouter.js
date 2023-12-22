@@ -152,10 +152,16 @@ profilesRouter
 
   //questo POST crea un nuovo utente, hasha la password, e resituisce subito il token (REGISTRAZIONE)
   //Requisiti body: name surname email password
+  //voglio anche controllare che l'email non sia già presente nel db
   .post("/", async (req, res, next) => {
     try {
-      const password = await bcrypt.hash(req.body.password, 10)
+      //controllo se l'email all'interno del body è già presente nel db
+      const existingUser = await User.findOne({ email: req.body.email })
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already exists" })
+      }
 
+      const password = await bcrypt.hash(req.body.password, 10)
       const newUser = await User.create({
         ...req.body,
         password,
