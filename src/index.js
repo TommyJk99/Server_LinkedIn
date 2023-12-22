@@ -27,7 +27,7 @@ server.use("/api", apiRouter)
 
 //serve a vedere se il server è UP
 server.get("/health", (req, res) => {
-  res.status(200)
+  res.status(200).send("Server is UP!")
 })
 
 //Middleware di errore generico
